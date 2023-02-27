@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\UserModel;
 use Illuminate\Http\Request;
 
@@ -11,40 +12,61 @@ class UserController extends Controller
     {
 
         $data = UserModel::get();
-
         return response()->json($data);
     }
 
-    public function createUser()
+
+    public function showUser($id){
+        $data = UserModel::findOrFail($id);
+        return response()->json($data);
+    }
+    
+
+    public function createUser(Request $request)
     {
 
-        $data = UserModel::create([
-            "id" => 6,
-            "name" => "Ana Tilmidun",
-            "email" => "emailana@gmail.com",
-            "password" => "123456",
+      
 
-        ]);
-
+        $data = UserModel::create($request->all());
         return response()->json($data);
     }
 
-    public function updateUser()
+    public function updateUser($id, Request $request)
     {
 
-        UserModel::where('id', 6)->update([
-            "name" => "Stay Halal",
-            "email" => "new@gmail.com",
-            "password" => "11111",
+        UserModel::where('id', $id)->update([
+            "name" => $request->name,
+            "email" => $request->email,
+            "password" => $request->password,
         ]);
 
-        return response()->json("Data berhasil di Update");
+      
+
+    $data = UserModel::find($id);
+    return response()->json([
+        'status'=>200,
+        'data'=>$data,
+    ]);
+
+
     }
 
-    public function deleteUser()
+    public function detailUser($id){
+        $data = UserModel::find($id);
+        return response()->json([
+        'status'=>200,
+        'data'=>$data,
+    ]);
+    }
+
+    public function deleteUser($id)
     {
 
-        UserModel::where('id', 6)->delete();
-        return response()->json("Data berhasil di delete");
+        // UserModel::where($id)->delete();
+        // return response()->json("Data berhasil di delete");
+
+        $data = UserModel::findOrFail($id);
+        $data->delete();
+        return response()->json($data);
     }
 }
